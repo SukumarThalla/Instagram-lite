@@ -1,13 +1,27 @@
 import { Context } from "hono";
 import { userPostQueries } from "../services/userPostQuery";
-
+import {
+  userPostsValidations,
+  userPostTypes,
+} from "../valibot/userPostValibote";
+import * as v from "valibot";
 export class UserPostController {
   async postUser(c: Context) {
     try {
       const body = await c.req.json();
-      await userPostQueries.postUserData(body);
+      const validations = v.safeParse(userPostsValidations, body, {
+        abortPipeEarly: true,
+      });
+
+      if (!validations.success) {
+        const errors = v.flatten(validations.issues).nested;
+        return c.json({ errors: errors }, 400);
+      }
+      const ValidatedData: userPostTypes = validations.output;
+      await userPostQueries.postUserData(ValidatedData);
       return c.json({ success: "POST ADDED SUCCESSFULLY" }, 201);
     } catch (error) {
+      console.log(error);
       return c.json({ error: "Unable to Process now" }, 500);
     }
   }
