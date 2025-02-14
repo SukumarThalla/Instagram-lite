@@ -31,4 +31,6 @@ export const userPostsValidations = v.object({
   isPublic: v.boolean("Option must be  either True of False"),
 });
 
+export const userIdValidation = v.pick(userPostsValidations, ["userId"])
+
 export type userPostTypes = v.InferInput<typeof userPostsValidations>;
