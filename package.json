@@ -16,7 +16,8 @@
     "drizzle-orm": "^0.39.3",
     "hono": "^4.7.0",
     "node": "^22.14.0",
-    "pg": "^8.13.3"
+    "pg": "^8.13.3",
+    "valibot": "^1.0.0-rc.0"
   },
   "devDependencies": {
     "@types/node": "^22.13.1",
