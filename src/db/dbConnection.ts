@@ -23,4 +23,4 @@ export const db = drizzle(pool, { schema: { userPosts } });
 
 db.execute("SELECT 1")
   .then(() => console.log("DB CONNECTION IS SUCCESSFULL"))
-  .catch(() => console.error("failed"));
+  .catch(() => console.error("Failed"));

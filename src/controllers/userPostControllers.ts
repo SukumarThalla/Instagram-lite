@@ -1,12 +1,12 @@
 import { Context } from "hono";
 import { userPostQueries } from "../services/userPostQuery";
-import { userPostTypes } from "../valibot/userPostValiboteSchema";
+import { userPostTypes } from "../valibot/valibotschemas/userPostValiboteSchema";
 import { validationParse } from "../valibot/parseFunction";
 import { handlingError } from "../exceptions/errorHandling";
 import {
   userPostsValidations,
   userIdValidation,
-} from "../valibot/userPostValiboteSchema";
+} from "../valibot/valibotschemas/userPostValiboteSchema";
 import { array } from "valibot";
 export class UserPostController {
   async postUser(c: Context) {
