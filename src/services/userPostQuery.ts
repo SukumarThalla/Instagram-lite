@@ -1,6 +1,6 @@
 import { db } from "../db/dbConnection";
 import { userPosts } from "../db/schema/userPostSchema";
-import { eq } from "drizzle-orm";
+import { eq, and, desc } from "drizzle-orm";
 class UserPostQueries {
   async postUserData(body: any) {
     return await db.insert(userPosts).values({
@@ -11,11 +11,18 @@ class UserPostQueries {
       isPublic: body.isPublic,
     });
   }
-  async getUserPosts(userId?: any) {
-    const query = db.select().from(userPosts).orderBy(userPosts.createdAt);
-    return userId !== undefined
-      ? await query.where(eq(userPosts.userId, userId))
-      : await query;
+  async getUserPosts(userId: any, offset: number, limit: number) {
+    return await db
+      .select()
+      .from(userPosts)
+      .where(
+        userId !== undefined
+          ? and(eq(userPosts.userId, userId))
+          : eq(userPosts.isPublic, true)
+      )
+      .orderBy(desc(userPosts.createdAt))
+      .limit(limit)
+      .offset(offset);
   }
 }
 

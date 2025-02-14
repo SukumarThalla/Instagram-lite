@@ -3,11 +3,19 @@ import { userPostQueries } from "../services/userPostQuery";
 import { userPostTypes } from "../valibot/userPostValiboteSchema";
 import { validationParse } from "../valibot/parseFunction";
 import { handlingError } from "../exceptions/errorHandling";
+import {
+  userPostsValidations,
+  userIdValidation,
+} from "../valibot/userPostValiboteSchema";
+import { array } from "valibot";
 export class UserPostController {
   async postUser(c: Context) {
     try {
       const body = await c.req.json();
-      const ValidatedData: userPostTypes = await validationParse(body);
+      const ValidatedData: userPostTypes = await validationParse(
+        userPostsValidations,
+        body
+      );
       await userPostQueries.postUserData(ValidatedData);
       return c.json({ success: "POST ADDED SUCCESSFULLY" }, 201);
     } catch (err) {
@@ -17,9 +25,26 @@ export class UserPostController {
 
   async getUserPosts(c: Context) {
     try {
-      const UserId = c.req.param("userId");
-      const userPosts = await userPostQueries.getUserPosts(UserId);
-      return c.json({ success: "Success", userPosts }, 200);
+      const userId = c.req.param("userId");
+      const page = Number(c.req.query("page")) || 1;
+      const limit = Number(c.req.query("limit")) || 10;
+      const offset = (page - 1) * limit;
+
+      const userPosts = await userPostQueries.getUserPosts(
+        userId,
+        offset,
+        limit
+      );
+      return c.json(
+        {
+          success: userPosts.length
+            ? "Success"
+            : "No posts Found on this UserId",
+          noOfPosts: userPosts.length,
+          posts: userPosts,
+        },
+        200
+      );
     } catch (error) {
       return c.json({ error: "Unable to get the Posts" }, 500);
     }
